@@ -41,16 +41,6 @@ pub fn import_provider_from_deeplink(
         .clone()
         .ok_or_else(|| AppError::InvalidInput("Missing 'app' field for provider".to_string()))?;
 
-    let api_key = merged_request.api_key.as_ref().ok_or_else(|| {
-        AppError::InvalidInput("API key is required (either in URL or config file)".to_string())
-    })?;
-
-    if api_key.is_empty() {
-        return Err(AppError::InvalidInput(
-            "API key cannot be empty".to_string(),
-        ));
-    }
-
     // Get endpoint: supports comma-separated multiple URLs (first is primary)
     let endpoint_str = merged_request.endpoint.as_ref().ok_or_else(|| {
         AppError::InvalidInput("Endpoint is required (either in URL or config file)".to_string())

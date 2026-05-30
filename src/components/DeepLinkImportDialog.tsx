@@ -10,6 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
@@ -17,6 +18,8 @@ import { PromptConfirmation } from "./deeplink/PromptConfirmation";
 import { McpConfirmation } from "./deeplink/McpConfirmation";
 import { SkillConfirmation } from "./deeplink/SkillConfirmation";
 import { ProviderIcon } from "./ProviderIcon";
+import { providerPresets } from "@/config/claudeProviderPresets";
+import { codexProviderPresets } from "@/config/codexProviderPresets";
 
 interface DeeplinkError {
   url: string;
@@ -29,6 +32,7 @@ export function DeepLinkImportDialog() {
   const [request, setRequest] = useState<DeepLinkImportRequest | null>(null);
   const [isImporting, setIsImporting] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [manualApiKey, setManualApiKey] = useState("");
 
   // 容错判断：MCP 导入结果可能缺少 type 字段
   const isMcpImportResult = (
@@ -73,6 +77,7 @@ export function DeepLinkImportDialog() {
           setRequest(event.payload);
         }
 
+        setManualApiKey("");
         setIsOpen(true);
       },
     );
@@ -97,7 +102,31 @@ export function DeepLinkImportDialog() {
     setIsImporting(true);
 
     try {
-      const result = await deeplinkApi.importFromDeeplink(request);
+      const needsApiKey = request.resource === "provider" && !request.apiKey;
+      let finalRequest = needsApiKey && manualApiKey
+        ? { ...request, apiKey: manualApiKey }
+        : request;
+
+      // Auto-fill icon from preset if not provided
+      if (finalRequest.resource === "provider" && !finalRequest.icon) {
+        const allPresets = [
+          ...providerPresets,
+          ...codexProviderPresets,
+        ];
+        const matched = allPresets.find((p) => {
+          const nameMatch = p.name.toLowerCase() === (finalRequest.name || "").toLowerCase();
+          const endpointMatch = p.endpointCandidates?.some((ep) =>
+            (finalRequest.endpoint || "").toLowerCase().includes(ep.toLowerCase()) ||
+            ep.toLowerCase().includes((finalRequest.endpoint || "").toLowerCase())
+          );
+          return nameMatch || endpointMatch;
+        });
+        if (matched?.icon) {
+          finalRequest = { ...finalRequest, icon: matched.icon };
+        }
+      }
+
+      const result = await deeplinkApi.importFromDeeplink(finalRequest);
       const refreshMcp = async (summary: {
         importedCount: number;
         importedIds: string[];
@@ -204,6 +233,7 @@ export function DeepLinkImportDialog() {
 
   const handleCancel = () => {
     setIsOpen(false);
+    setManualApiKey("");
   };
 
   // Mask API key for display (show first 4 chars + ***)
@@ -410,13 +440,26 @@ export function DeepLinkImportDialog() {
                     </div>
                   </div>
 
-                  {/* API Key (masked) */}
+                  {/* API Key (masked or input) */}
                   <div className="grid grid-cols-3 items-center gap-4">
                     <div className="font-medium text-sm text-muted-foreground">
                       {t("deeplink.apiKey")}
                     </div>
-                    <div className="col-span-2 text-sm font-mono text-muted-foreground">
-                      {maskedApiKey}
+                    <div className="col-span-2">
+                      {request.apiKey ? (
+                        <span className="text-sm font-mono text-muted-foreground">
+                          {maskedApiKey}
+                        </span>
+                      ) : (
+                        <Input
+                          type="password"
+                          value={manualApiKey}
+                          onChange={(e) => setManualApiKey(e.target.value)}
+                          placeholder={t("deeplink.apiKeyPlaceholder", { defaultValue: "请输入 API Key" })}
+                          className="h-8 text-sm font-mono"
+                          autoComplete="off"
+                        />
+                      )}
                     </div>
                   </div>
 
