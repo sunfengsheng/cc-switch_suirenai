@@ -103,21 +103,25 @@ export function DeepLinkImportDialog() {
 
     try {
       const needsApiKey = request.resource === "provider" && !request.apiKey;
-      let finalRequest = needsApiKey && manualApiKey
-        ? { ...request, apiKey: manualApiKey }
-        : request;
+      let finalRequest =
+        needsApiKey && manualApiKey
+          ? { ...request, apiKey: manualApiKey }
+          : request;
 
       // Auto-fill icon from preset if not provided
       if (finalRequest.resource === "provider" && !finalRequest.icon) {
-        const allPresets = [
-          ...providerPresets,
-          ...codexProviderPresets,
-        ];
+        const allPresets = [...providerPresets, ...codexProviderPresets];
         const matched = allPresets.find((p) => {
-          const nameMatch = p.name.toLowerCase() === (finalRequest.name || "").toLowerCase();
-          const endpointMatch = p.endpointCandidates?.some((ep) =>
-            (finalRequest.endpoint || "").toLowerCase().includes(ep.toLowerCase()) ||
-            ep.toLowerCase().includes((finalRequest.endpoint || "").toLowerCase())
+          const nameMatch =
+            p.name.toLowerCase() === (finalRequest.name || "").toLowerCase();
+          const endpointMatch = p.endpointCandidates?.some(
+            (ep) =>
+              (finalRequest.endpoint || "")
+                .toLowerCase()
+                .includes(ep.toLowerCase()) ||
+              ep
+                .toLowerCase()
+                .includes((finalRequest.endpoint || "").toLowerCase()),
           );
           return nameMatch || endpointMatch;
         });
@@ -455,7 +459,9 @@ export function DeepLinkImportDialog() {
                           type="password"
                           value={manualApiKey}
                           onChange={(e) => setManualApiKey(e.target.value)}
-                          placeholder={t("deeplink.apiKeyPlaceholder", { defaultValue: "请输入 API Key" })}
+                          placeholder={t("deeplink.apiKeyPlaceholder", {
+                            defaultValue: "请输入 API Key",
+                          })}
                           className="h-8 text-sm font-mono"
                           autoComplete="off"
                         />

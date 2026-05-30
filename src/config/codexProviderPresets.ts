@@ -593,7 +593,7 @@ export const codexProviderPresets: CodexProviderPreset[] = [
     config: generateThirdPartyConfig(
       "SuirenAI",
       "https://api.suirenai.com/v1",
-      "gpt-5.5"
+      "gpt-5.5",
     ),
     endpointCandidates: ["https://api.suirenai.com/v1"],
     icon: "suirenai",
