@@ -34,11 +34,7 @@ jobs:
           node-version: '20'
 
       - name: Setup Rust
-        run: |
-          rustup show active-toolchain || true
-          rustup toolchain install $(grep '^channel' rust-toolchain.toml | sed 's/.*= *"\(.*\)"/\1/')
-          rustup override set $(grep '^channel' rust-toolchain.toml | sed 's/.*= *"\(.*\)"/\1/')
-          rustup component add rustfmt clippy
+        uses: dtolnay/rust-toolchain@stable
 
       - name: Add macOS targets
         if: runner.os == 'macOS'
@@ -78,7 +74,10 @@ jobs:
             || sudo apt-get install -y --no-install-recommends libsoup2.4-dev
 
       - name: Setup pnpm
-        run: npm install -g pnpm@10.12.3
+        uses: pnpm/action-setup@v6
+        with:
+          version: 10.12.3
+          run_install: false
 
       - name: Get pnpm store directory
         id: pnpm-store
