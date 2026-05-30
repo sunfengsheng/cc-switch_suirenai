@@ -73,7 +73,13 @@ jobs:
           sudo apt-get install -y --no-install-recommends libsoup-3.0-dev \
             || sudo apt-get install -y --no-install-recommends libsoup2.4-dev
 
-      - name: Setup pnpm
+      - name: Setup pnpm (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: npm install -g pnpm@10.12.3
+
+      - name: Setup pnpm (non-Windows)
+        if: runner.os != 'Windows'
         uses: pnpm/action-setup@v6
         with:
           version: 10.12.3
