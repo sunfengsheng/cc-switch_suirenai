@@ -100,13 +100,6 @@ const expectedChatPresets = new Map<
     },
   ],
   [
-    "ModelScope",
-    {
-      baseUrl: "https://api-inference.modelscope.cn/v1",
-      contextWindows: { "ZhipuAI/GLM-5.1": 200000 },
-    },
-  ],
-  [
     "Longcat",
     {
       baseUrl: "https://api.longcat.chat/openai/v1",
@@ -146,34 +139,6 @@ const expectedChatPresets = new Map<
     {
       baseUrl: "https://token-plan-cn.xiaomimimo.com/v1",
       contextWindows: { "mimo-v2.5-pro": 1048576 },
-    },
-  ],
-  [
-    "SiliconFlow",
-    {
-      baseUrl: "https://api.siliconflow.cn/v1",
-      contextWindows: { "Pro/MiniMaxAI/MiniMax-M2.7": 200000 },
-    },
-  ],
-  [
-    "SiliconFlow en",
-    {
-      baseUrl: "https://api.siliconflow.com/v1",
-      contextWindows: { "MiniMaxAI/MiniMax-M2.7": 200000 },
-    },
-  ],
-  [
-    "Novita AI",
-    {
-      baseUrl: "https://api.novita.ai/openai/v1",
-      contextWindows: { "zai-org/glm-5.1": 202800 },
-    },
-  ],
-  [
-    "Nvidia",
-    {
-      baseUrl: "https://integrate.api.nvidia.com/v1",
-      contextWindows: { "moonshotai/kimi-k2.5": 262144 },
     },
   ],
 ]);

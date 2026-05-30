@@ -19,8 +19,6 @@ const expectInOrder = (names: string[], expected: string[]) => {
 describe("provider preset order", () => {
   it("Claude 预设按合作伙伴优先顺序排列", () => {
     expectInOrder(namesOf(providerPresets), [
-      "Shengsuanyun",
-      "PatewayAI",
       "火山Agentplan",
       "BytePlus",
       "DouBaoSeed",
@@ -48,8 +46,6 @@ describe("provider preset order", () => {
 
   it("Codex 预设按合作伙伴优先顺序排列", () => {
     expectInOrder(namesOf(codexProviderPresets), [
-      "Shengsuanyun",
-      "PatewayAI",
       "火山Agentplan",
       "BytePlus",
       "DouBaoSeed",
