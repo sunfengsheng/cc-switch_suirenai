@@ -34,7 +34,11 @@ jobs:
           node-version: '20'
 
       - name: Setup Rust
-        uses: dtolnay/rust-toolchain@stable
+        run: |
+          rustup show active-toolchain || true
+          rustup toolchain install $(grep '^channel' rust-toolchain.toml | sed 's/.*= *"\(.*\)"/\1/')
+          rustup override set $(grep '^channel' rust-toolchain.toml | sed 's/.*= *"\(.*\)"/\1/')
+          rustup component add rustfmt clippy
 
       - name: Add macOS targets
         if: runner.os == 'macOS'
